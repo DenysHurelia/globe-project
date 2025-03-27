@@ -210,7 +210,7 @@
     z-index: 10;
   }
 
-  /* Оновлені стилі для модального вікна (тепер сайдбар) */
+  /* Стилі для модального вікна */
 .modal {
   display: none;
   position: fixed;
@@ -287,26 +287,4 @@
   font-style: italic;
   text-align: center;
   margin-top: 50px;
-}
-
-/* Адаптація для малих екранів */
-@media (max-width: 768px) {
-  .modal {
-    width: 280px;
-    padding: 15px;
-  }
-  
-  .country-stats h2 {
-    font-size: 20px;
-  }
-  
-  .stat-row {
-    flex-direction: column;
-  }
-  
-  .stat-label,
-  .stat-value {
-    width: 100%;
-    text-align: left;
-  }
 }

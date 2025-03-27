@@ -88,7 +88,7 @@ function initTooltip() {
                 }
             }
             
-            // Спеціальна обробка для росії
+            // Спеціальна обробка для расісі
             if (foundCountry === "Russia") {
                 foundCountry = "Свиногорія";
                 showPigCountryStats();
@@ -152,7 +152,7 @@ function initTooltip() {
             }
             
             const data = await response.json();
-            displayCountryStats(data[0]); // Беремо перший елемент масиву
+            displayCountryStats(data[0]);
         } catch (error) {
             console.error('Помилка отримання даних:', error);
             statsContentElement.innerHTML = `
