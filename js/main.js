@@ -7,6 +7,7 @@ function showLoader() {
   function hideLoader() {
     const loader = document.getElementById('loader');
     loader.style.opacity = '0';
+    loader.style.pointerEvents = 'none'; // Дозволяє кліки через лоадер
     setTimeout(() => {
       loader.style.display = 'none';
       document.getElementById('globeCanvas').style.opacity = '1';
@@ -21,45 +22,45 @@ function showLoader() {
   });
   
   // Запуск додатка
+  let audioManager;
+  
   async function init() {
-    showLoader();
-    initScene();
-    
-    // Чекаємо на завантаження DOM
-    await new Promise(resolve => {
-        if (document.readyState === 'complete') {
-            resolve();
-        } else {
-            window.addEventListener('load', resolve);
-        }
-    });
-    
-    console.log("DOM завантажено, ініціалізація сцени...");
-    
-    await Promise.all([
+    try {
+      audioManager = new AudioManager();
+      showLoader();
+      initScene();
+  
+      // Чекаємо на завантаження DOM
+      await new Promise(resolve => {
+        if (document.readyState === 'complete') resolve();
+        else window.addEventListener('load', resolve);
+      });
+  
+      // Завантажуємо основні компоненти
+      await Promise.all([
         createGlobe(),
         loadCountries(),
-        new Promise(resolve => setTimeout(resolve, 2000)) // Мінімальний час завантаження
-    ]);
-    
-    console.log("Сцена створена, ініціалізація підказок...");
-    initTooltip();
-    
-    console.log("Запуск анімації...");
-    animate();
-    hideLoader();
-    
-    // Обробник кнопки паузи
-    const playPauseButton = document.getElementById('playPauseButton');
-    if (playPauseButton) {
-        playPauseButton.addEventListener('change', function(e) {
-            isPaused = !e.target.checked;
-            controls.autoRotate = e.target.checked;
-        });
+        new Promise(resolve => setTimeout(resolve, 2000))
+      ]);
+  
+      initTooltip();
+      animate();
+      
+    } catch (error) {
+      console.error("Помилка ініціалізації:", error);
+    } finally {
+      hideLoader(); // Гарантоване приховування лоадера
     }
     
-    console.log("Ініціалізація завершена");
-}
+    // Ініціалізація кнопки паузи
+    const playPauseButton = document.getElementById('playPauseButton');
+    if (playPauseButton) {
+      playPauseButton.addEventListener('change', function(e) {
+        isPaused = !e.target.checked;
+        controls.autoRotate = e.target.checked;
+      });
+    }
+  }
 
 // Запускаємо після завантаження
 if (document.readyState === 'complete') {

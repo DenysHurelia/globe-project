@@ -75,6 +75,12 @@ function onWindowResize() {
 // Анімація
 function animate() {
   requestAnimationFrame(animate);
+  
+  // Адаптація звуку до швидкості обертання
+  const rotationSpeed = controls.autoRotateSpeed * (controls.autoRotate ? 1 : 0);
+  const pitch = 0.5 + rotationSpeed * 0.1;
+  audioManager.sounds.bgMusic.rate(pitch);
+  
   if(!isPaused) {
     controls.update();
   }
