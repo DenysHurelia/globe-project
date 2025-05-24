@@ -34,8 +34,10 @@
   <div id="countryTooltip" class="country-tooltip"></div>
   <div id="highlight" class="highlight"></div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+  <script src="js/audio.js"></script>
   <script src="js/constants.js"></script>
   <script src="js/helpers.js"></script>
   <script src="js/globe.js"></script>
@@ -43,6 +45,11 @@
   <script src="js/tooltip.js"></script>
   <script src="js/main.js"></script>
 
+  <div class="audio-controls">
+    <button id="toggleSound">🔊</button>
+    <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="0.5">
+  </div>
+  
   <div id="countryModal" class="modal">
     <div class="modal-content">
       <span class="close-modal">&times;</span>

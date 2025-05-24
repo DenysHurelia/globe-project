@@ -64,6 +64,7 @@ function initTooltip() {
     }
     
     function handleCountryClick(event) {
+        audioManager.playSound('click');
         event.preventDefault();
         
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -203,6 +204,7 @@ function initTooltip() {
     
     // Обробники подій
     closeModalButton.addEventListener('click', () => {
+        audioManager.playSound('close');
         modal.classList.remove('open');
     });
     
