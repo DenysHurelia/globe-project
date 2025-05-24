@@ -1,3 +1,5 @@
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
 // Глобальні змінні
 let scene, camera, renderer, controls, globe;
 let countryMeshes = [];
@@ -60,7 +62,11 @@ async function createGlobe() {
     shininess: 15
   });
   
-  const geometry = new THREE.SphereGeometry(GLOBE_RADIUS, 64, 64);
+  const geometry = new THREE.SphereGeometry(
+    GLOBE_RADIUS,
+    isMobile ? 32 : 64,  // Сегменти
+    isMobile ? 32 : 64
+  );
   globe = new THREE.Mesh(geometry, material);
   scene.add(globe);
 }
@@ -76,12 +82,7 @@ function onWindowResize() {
 function animate() {
   requestAnimationFrame(animate);
   
-  // Адаптація звуку до швидкості обертання
-  const rotationSpeed = controls.autoRotateSpeed * (controls.autoRotate ? 1 : 0);
-  const pitch = 0.5 + rotationSpeed * 0.1;
-  audioManager.sounds.bgMusic.rate(pitch);
-  
-  if(!isPaused) {
+  if (!isPaused) {
     controls.update();
   }
   renderer.render(scene, camera);

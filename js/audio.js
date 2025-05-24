@@ -1,37 +1,42 @@
 class AudioManager {
   constructor() {
     this.sounds = {
-      click: new Howl({ src: ['sounds/click.wav'] }),
+      click: new Howl({ src: ['sounds/click.wav'], volume: 0.5 }),
       open: new Howl({ src: ['sounds/open.mp3'] }),
       close: new Howl({ src: ['sounds/close.mp3'] }),
       bgMusic: new Howl({
         src: ['sounds/ambient.mp3'],
         loop: true,
-        volume: 0.4
+        volume: 0.4,
+        autoplay: false // Вимкнуто автопрогравання
       })
     };
     
-    this.isMuted = false; // Додаємо внутрішній стан мьюта
+    this.isMuted = false;
     this.initControls();
-    this.startAmbient();
+  }
+
+  startAmbient() {
+    if (!this.isMuted && !this.sounds.bgMusic.playing()) {
+      this.sounds.bgMusic.play();
+    }
   }
 
   initControls() {
     const toggleBtn = document.getElementById('toggleSound');
     const volumeControl = document.getElementById('volumeControl');
     
-    // Встановлюємо початковий стан іконки
-    toggleBtn.textContent = this.isMuted ? '🔇' : '🔊';
-    
+    // Ініціалізація стану
+    volumeControl.value = this.sounds.bgMusic.volume();
+    toggleBtn.textContent = this.sounds.bgMusic.mute() ? '🔇' : '🔊';
+
     toggleBtn.addEventListener('click', () => {
-      this.toggleMute();
-      toggleBtn.textContent = this.isMuted ? '🔇' : '🔊';
+      this.sounds.bgMusic.mute(!this.sounds.bgMusic.mute());
+      toggleBtn.textContent = this.sounds.bgMusic.mute() ? '🔇' : '🔊';
     });
     
     volumeControl.addEventListener('input', (e) => {
-      if (!this.isMuted) { // Змінюємо гучність тільки якщо не мьютимо
-        Howler.volume(parseFloat(e.target.value));
-      }
+      this.sounds.bgMusic.volume(parseFloat(e.target.value));
     });
   }
 
@@ -43,19 +48,7 @@ class AudioManager {
     if (!this.isMuted) {
       Howler.volume(parseFloat(document.getElementById('volumeControl').value));
     }
-  }
-  
-    startAmbient() {
-      this.sounds.bgMusic.play();
-      
-      // Автопродовження при взаємодії користувача
-      document.addEventListener('click', () => {
-        if (Howler.ctx.state === 'suspended') {
-          Howler.ctx.resume();
-        }
-      }, { once: true });
-    }
-  
+  }  
     playSound(name) {
       if (!Howler.muted) {
         this.sounds[name].play();

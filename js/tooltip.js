@@ -67,6 +67,8 @@ function initTooltip() {
         audioManager.playSound('click');
         event.preventDefault();
         
+        console.log('--- Початок обробки кліку ---');
+        
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
         
@@ -76,6 +78,7 @@ function initTooltip() {
         if (intersects.length > 0) {
             const intersectPoint = intersects[0].point;
             const { lat, lon } = cartesianToLatLon(intersectPoint);
+            console.log('Координати кліку:', { lat, lon });
             
             let foundCountry = null;
             let countryCode = null;
@@ -85,21 +88,82 @@ function initTooltip() {
                 if (isPointInCountry(lat, lon, feature)) {
                     foundCountry = countryName;
                     countryCode = feature.properties.ISO_A2 || feature.properties.ISO_A3;
+                    console.log('Знайдена країна:', foundCountry, 'Код:', countryCode);
                     break;
                 }
             }
             
             // Спеціальна обробка для расісі
-            if (foundCountry === "Russia") {
+            if (foundCountry === "Russia" && isPointInCrimea(lat, lon)) {
+                console.log('Виявлено Крим в расії, міняємо на Україну');
                 foundCountry = "Свиногорія";
                 showPigCountryStats();
                 return;
             }
+    
+            // ГРА - початок діагностики
+            if (game.active) {
+                console.group('[Game Debug]');
+                console.log('Поточний таргет гри:', game.currentCountry);
+                console.log('Клікнута країна:', foundCountry);
+                
+                if (foundCountry) {
+                    const normalize = (str) => str.toLowerCase()
+                        .replace(/[^a-zа-яїієґ]/g, '')
+                        .replace(/(і|ї|є)/g, match => ({'і':'i','ї':'yi','є':'ye'}[match]));
+                    
+                    const targetNormalized = normalize(game.currentCountry);
+                    const clickedNormalized = normalize(foundCountry);
+                    
+                    console.log('Нормалізовані назви:', {
+                        target: targetNormalized,
+                        clicked: clickedNormalized
+                    });
+                    
+                    if (targetNormalized === clickedNormalized) {
+                        console.log('Вірно! Зараховано бал');
+                        game.score++;
+                        
+                        try {
+                            audioManager.playSound('correct');
+                        } catch(e) {
+                            console.error('Помилка звуку:', e);
+                        }
+                        
+                        document.getElementById('currentTarget').classList.add('correct');
+                        
+                        // Змінено порядок дій
+                        setTimeout(() => {
+                            document.getElementById('currentTarget').classList.remove('correct');
+                            generateNewCountry(); // Переміщено після закриття анімації
+                            updateGameDisplay();
+                        }, 500);
+                    } else {
+                        console.log('Невірна відповідь');
+                        document.getElementById('currentTarget').classList.add('wrong');
+                        audioManager.playSound('wrong');
+                        setTimeout(() => document.getElementById('currentTarget').classList.remove('wrong'), 500);
+                    }
+                    updateGameDisplay();
+                } else {
+                    console.log('Країну не визначено');
+                }
+                console.groupEnd();
+                return;
+            }
+            // ГРА - кінець діагностики
             
             if (foundCountry && countryCode) {
+                console.log('Відкриваємо модалку для:', foundCountry);
                 showCountryStats(foundCountry, countryCode);
+            } else {
+                console.log('Країну не знайдено');
             }
+        } else {
+            console.log('Клік поза глобусом');
         }
+        
+        console.log('--- Кінець обробки кліку ---');
     }
     
     // Спеціальна функція для відображення "статистики" Свиногорії

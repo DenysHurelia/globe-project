@@ -45,7 +45,7 @@
   <script src="js/tooltip.js"></script>
   <script src="js/main.js"></script>
 
-  <div class="audio-controls">
+  <div class="audio-controls" id="audioControls">
     <button id="toggleSound">🔊</button>
     <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="0.5">
   </div>
@@ -57,6 +57,30 @@
         <h2 id="countryName"></h2>
         <div id="statsContent"></div>
       </div>
+    </div>
+  </div>
+
+  <div id="gameOverlay" class="game-overlay">
+    <div id="gamePanel" class="game-panel">
+      <h2>🌍 Знайди країну! 🌏</h2>
+      <div class="game-stats">
+        <div class="stat-box">
+          <span>⏳ Час:</span>
+          <span id="gameTimer">60</span>
+        </div>
+        <div class="stat-box">
+          <span>🎯 Знайдено:</span>
+          <span id="gameScore">0</span>
+        </div>
+      </div>
+      <div id="currentTarget" class="target-country"></div>
+      <button id="startGameBtn" class="game-button">Почати гру!</button>
+    </div>
+    
+    <div id="gameResults" class="game-results">
+      <h3>Результат гри</h3>
+      <p>Знайдено країн: <span id="finalScore">0</span></p>
+      <button onclick="restartGame()" class="game-button">Спробувати ще</button>
     </div>
   </div>
 

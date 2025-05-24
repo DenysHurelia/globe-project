@@ -47,3 +47,12 @@ function latLonToCartesian(lat, lon) {
   function isPointInCrimea(lat, lon) {
     return lat >= 44 && lat <= 47 && lon >= 32 && lon <= 37;
   }
+
+  function normalizeCountryName(str) {
+    return str.toLowerCase()
+      .replace(/[^a-zа-яїієґ]/g, '')
+      .replace(/(і|ї|є)/g, match => {
+        const replacements = { 'і': 'i', 'ї': 'yi', 'є': 'ye' };
+        return replacements[match];
+      });
+  }
